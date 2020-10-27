@@ -45,8 +45,41 @@ def task1():
     
     return training_data, training_labels, test_data, test_labels
 
-def task2():
-    training_data, training_lables, test_data, test_labels = task1()
+def task2(training_data, min_word_length, min_word_occ):
+    world_list = []
+    word_occurences = {}
+    
+    # Index stores the current enumerated count in this for loop
+    # row value contians the string from training_data
+    for index, row_value in enumerate(training_data['Review']):
+        # Basically this just goes the entire string and puts all the alphanum
+        # and white space characters into a new string.
+        # White space characters are kept so the string can be split
+        transformedValue = "".join(c for c in row_value if c.isalnum() or c == " ")
+        transformedValue = transformedValue.lower()
+        transformedValue = transformedValue.split()
+        
+        # THIS PART NOT BE NEEDED
+        # Set the value of the row in training to transformedValue
+        # iloc gets a row from the dataframe as a series with the index put in
+        # values gets all the values in that seires
+        # training_data.iloc[index].values[0] = transformedValue
+        # break
+        
+        # Get the word occurences for each word and add each word to dict
+        for word in transformedValue:
+            if (min_word_length <= len(word)):
+                if (word in word_occurences):
+                    word_occurences[word] = word_occurences[word] + 1
+                else:
+                    word_occurences[word]=1    
+    
+    # Add each word that occurs min times into word list
+    for word in word_occurences:
+        if min_word_occ <= word_occurences[word]:
+            world_list.append(word)
+
+    return world_list
     
 def task3():
     pass
@@ -63,19 +96,21 @@ def task6():
 def task7():
     pass
 
-print(("="*50), "Task2", ("="*50))
-task2()
-# print("="*50)
-# task3()
-# print("="*50)
-# task4()
-# print("="*50)
-# task5()
-# print("="*50)
-# task6()
-# print("="*50)
-# task7()
-# print("="*50)
+def main():
+    # First create the four needed lists 
+    training_data, training_lables, test_data, test_labels = task1()
+    
+    # Now setup training data
+    word_list = task2(training_data, 3, 300)
+    
+    # for i in range(len(word_list)):
+    # print(len(word_list))
+    # for i in range(10):
+    #     print(word_list[i])
+     
+     
+print(("="*50), "Main", ("="*50))
+main()
 
 
 
