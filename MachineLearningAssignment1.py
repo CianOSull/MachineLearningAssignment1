@@ -113,23 +113,34 @@ def task3(word_list, training_data, training_labels):
 
     # print((training_data[training_labels['Sentiment'] == "positive"]).head())
     
-    for index, row_value in enumerate((training_data[training_labels['Sentiment'] == "positive"])):
+    for index, row_value in enumerate(training_data['Review']):
+        # Basically this just goes the entire string and puts all the alphanum
+        # and white space characters into a new string.
+        # White space characters are kept so the string can be split
         transformedValue = "".join(c for c in row_value if c.isalnum() or c == " ")
         transformedValue = transformedValue.lower()
         transformedValue = transformedValue.split()
+        training_data.iloc[index].values[0] = transformedValue
+    
         
-        for string in transformedValue:
+    positive_reviews = training_data[training_labels['Sentiment'] == "positive"]
+    
+    # Count all the occurances of words in positive reviews
+    for index, row_value in enumerate(positive_reviews['Review']):
+        # transformedValue = "".join(c for c in row_value if c.isalnum() or c == " ")
+        # transformedValue = transformedValue.lower()
+        # transformedValue = transformedValue.split()
+        
+        for string in positive_reviews.iloc[index].values[0]:
             # Get each word from word list
             for word in word_list:
                 # if word is equal to the string
                 if word == string:
-                    print(word)
-                    print(string)
-                    postive_word_count[word] += 1
-        break
-                    
-    # for i in range(len(word_list)):
-    #     print(postive_word_count[word_list[i]])
+                    # print(word)
+                    # print(string)
+                    postive_word_count[word] = postive_word_count[word] + 1
+        
+    print(("="*50))
 
 def task4():
     pass
