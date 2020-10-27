@@ -92,6 +92,7 @@ def task3(word_list, training_data, training_labels):
     # Also dict.fromkeys(list,y) creates a dictionary with a list as a key
     # and whatever base values you want.
     postive_word_count = dict.fromkeys(word_list, 0)
+    negative_word_count = dict.fromkeys(word_list, 0)
     
     # Go through each review
     # for index, row_value in enumerate(training_data['Review']):
@@ -139,6 +140,23 @@ def task3(word_list, training_data, training_labels):
                     # print(word)
                     # print(string)
                     postive_word_count[word] = postive_word_count[word] + 1
+                    
+    negative_reviews = training_data[training_labels['Sentiment'] == "negative"]
+    
+    # Count all the occurances of words in positive reviews
+    for index, row_value in enumerate(negative_reviews['Review']):
+        # transformedValue = "".join(c for c in row_value if c.isalnum() or c == " ")
+        # transformedValue = transformedValue.lower()
+        # transformedValue = transformedValue.split()
+        
+        for string in negative_reviews.iloc[index].values[0]:
+            # Get each word from word list
+            for word in word_list:
+                # if word is equal to the string
+                if word == string:
+                    # print(word)
+                    # print(string)
+                    negative_word_count[word] = negative_word_count[word] + 1
         
     print(("="*50))
 
