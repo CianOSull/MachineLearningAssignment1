@@ -48,6 +48,22 @@ def task1():
 def task2():
     training_data, training_lables, test_data, test_labels = task1()
     
+        # iloc gets a row from the dataframe as a series with the index put in
+    # values gets all the values in that seires
+    # print(training_data.iloc[0].values[0].split())
+    
+    # test = training_data.iloc[0].values[0]
+    # # Basically this just goes the entire string and puts all the alphanum
+    # # and white space characters into a new string.
+    # # White space characters are kept so the string can be split
+    # test = "".join(c for c in test if c.isalnum() or c == " ")
+    # print(test.split())
+    
+    print(training_data.iloc[0].values[0])
+    training_data.iloc[0].values[0] = "Test"
+    print(training_data.iloc[0].values[0])
+    
+    
 def task3():
     pass
 
