@@ -86,7 +86,24 @@ def task3(word_list, training_data, training_labels):
     # training set and counts for each of these words the number of reviews 
     # the word appears in [1 point]. 
     # Do the same for all negative reviews as well [1 point].
-
+    
+    # This will create a dictionary where each value from word list is the key
+    # for the count of the amount of times that word appears.
+    # Also dict.fromkeys(list,y) creates a dictionary with a list as a key
+    # and whatever base values you want.
+    postive_word_count = dict.fromkeys(word_list, 0)
+    
+    # Go through each review
+    for index, row_value in enumerate(training_data['Review']):
+        # if the index current value of the training label is positive
+        if training_labels.iloc[index].values[0] == "positive":
+            # check each string in training data index
+            for string in training_data.iloc[index].values[0]:
+                # Get each word from word list
+                for word in word_list:
+                    # if word is equal to the string
+                    if word == string:
+                        postive_word_count[word] += 1
 
 def task4():
     pass
