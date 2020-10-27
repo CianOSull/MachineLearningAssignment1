@@ -27,8 +27,8 @@ def task1():
     
     test_labels = review_df[review_df['Split'] == "train"][['Sentiment']]
     
-    # Print the count of labels for training and test
-    print(len(training_labels[training_labels["Sentiment"] == "positive"]))
+    # # Print the count of labels for training and test
+    # print(len(training_labels[training_labels["Sentiment"] == "positive"]))
     
     print("The number of postive reviews in the training set is >>>: ", 
           len(training_labels[training_labels["Sentiment"] == "positive"]))
@@ -63,7 +63,7 @@ def task2(training_data, min_word_length, min_word_occ):
         # Set the value of the row in training to transformedValue
         # iloc gets a row from the dataframe as a series with the index put in
         # values gets all the values in that seires
-        training_data.iloc[index].values[0] = transformedValue
+        # training_data.iloc[index].values[0] = transformedValue
         
         # Get the word occurences for each word and add each word to dict
         for word in transformedValue:
@@ -94,16 +94,42 @@ def task3(word_list, training_data, training_labels):
     postive_word_count = dict.fromkeys(word_list, 0)
     
     # Go through each review
-    for index, row_value in enumerate(training_data['Review']):
-        # if the index current value of the training label is positive
-        if training_labels.iloc[index].values[0] == "positive":
-            # check each string in training data index
-            for string in training_data.iloc[index].values[0]:
-                # Get each word from word list
-                for word in word_list:
-                    # if word is equal to the string
-                    if word == string:
-                        postive_word_count[word] += 1
+    # for index, row_value in enumerate(training_data['Review']):
+    #     # if the index current value of the training label is positive
+    #     if training_labels.iloc[index].values[0] == "positive":
+    #         # check each string in training data index
+    #         for string in training_data.iloc[index].values[0]:
+    #             # Get each word from word list
+    #             for word in word_list:
+    #                 # if word is equal to the string
+    #                 if word == string:
+    #                     postive_word_count[word] += 1
+    
+    # for index, row_value in enumerate(training_data['Review']):
+    #  # if the index current value of the training label is positive
+    #  if training_labels.iloc[index].values[0] == "positive":
+    #      # check each string in training data index
+    #      print("Positive index")
+
+    # print((training_data[training_labels['Sentiment'] == "positive"]).head())
+    
+    for index, row_value in enumerate((training_data[training_labels['Sentiment'] == "positive"])):
+        transformedValue = "".join(c for c in row_value if c.isalnum() or c == " ")
+        transformedValue = transformedValue.lower()
+        transformedValue = transformedValue.split()
+        
+        for string in transformedValue:
+            # Get each word from word list
+            for word in word_list:
+                # if word is equal to the string
+                if word == string:
+                    print(word)
+                    print(string)
+                    postive_word_count[word] += 1
+        break
+                    
+    # for i in range(len(word_list)):
+    #     print(postive_word_count[word_list[i]])
 
 def task4():
     pass
