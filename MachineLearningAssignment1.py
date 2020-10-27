@@ -45,8 +45,8 @@ def task1():
     
     return training_data, training_labels, test_data, test_labels
 
-def task2():
-    training_data, training_lables, test_data, test_labels = task1()
+def task2(training_data):
+   
     
     # iloc gets a row from the dataframe as a series with the index put in
     # values gets all the values in that seires
@@ -63,8 +63,18 @@ def task2():
     # training_data.iloc[0].values[0] = "Test"
     # print(training_data.iloc[0].values[0])
     
+    # Index stores the current enumerated count in this for loop
+    # row value contians the string from training_data
     for index, row_value in enumerate(training_data['Review']):
-        training_data.iloc[index].values[index] = "".join(c for c in row_value if c.isalnum() or c == " ")
+        # Basically this just goes the entire string and puts all the alphanum
+        # and white space characters into a new string.
+        # White space characters are kept so the string can be split
+        transformedValue = "".join(c for c in row_value if c.isalnum() or c == " ")
+        transformedValue = transformedValue.lower()
+        transformedValue = transformedValue.split()
+        
+        # Set the value of the row in training to transformedValue
+        training_data.iloc[index].values[index] = transformedValue
         break
     
     print(training_data.iloc[0].values[0])
@@ -84,19 +94,16 @@ def task6():
 def task7():
     pass
 
-print(("="*50), "Task2", ("="*50))
-task2()
-# print("="*50)
-# task3()
-# print("="*50)
-# task4()
-# print("="*50)
-# task5()
-# print("="*50)
-# task6()
-# print("="*50)
-# task7()
-# print("="*50)
+def main():
+    # First create the four needed lists 
+    training_data, training_lables, test_data, test_labels = task1()
+    
+    # Now setup training data
+    task2(training_data)
+     
+     
+print(("="*50), "Main", ("="*50))
+main()
 
 
 
