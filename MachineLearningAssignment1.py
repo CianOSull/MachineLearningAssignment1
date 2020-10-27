@@ -45,7 +45,7 @@ def task1():
     
     return training_data, training_labels, test_data, test_labels
 
-def task2(training_data):
+def task2(training_data, min_word_length, min_word_occ):
     # Index stores the current enumerated count in this for loop
     # row value contians the string from training_data
     for index, row_value in enumerate(training_data['Review']):
@@ -59,10 +59,12 @@ def task2(training_data):
         # Set the value of the row in training to transformedValue
         # iloc gets a row from the dataframe as a series with the index put in
         # values gets all the values in that seires
-        training_data.iloc[index].values[index] = transformedValue
-        break
+        training_data.iloc[index].values[0] = transformedValue
+        # break
     
-    print(training_data.iloc[0].values[0])
+    # print(training_data.iloc[1].values[0])
+    
+    return []
     
 def task3():
     pass
@@ -84,7 +86,7 @@ def main():
     training_data, training_lables, test_data, test_labels = task1()
     
     # Now setup training data
-    task2(training_data)
+    word_list = task2(training_data, 3, 300)
      
      
 print(("="*50), "Main", ("="*50))
