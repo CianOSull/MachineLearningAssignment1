@@ -63,8 +63,7 @@ def task2(training_data, min_word_length, min_word_occ):
         # Set the value of the row in training to transformedValue
         # iloc gets a row from the dataframe as a series with the index put in
         # values gets all the values in that seires
-        # training_data.iloc[index].values[0] = transformedValue
-        # break
+        training_data.iloc[index].values[0] = transformedValue
         
         # Get the word occurences for each word and add each word to dict
         for word in transformedValue:
@@ -81,8 +80,13 @@ def task2(training_data, min_word_length, min_word_occ):
 
     return world_list
     
-def task3():
-    pass
+def task3(word_list, training_data, training_labels):
+    # Task requirements broken down    
+    # Now create a function that goes through all positive reviews in the 
+    # training set and counts for each of these words the number of reviews 
+    # the word appears in [1 point]. 
+    # Do the same for all negative reviews as well [1 point].
+
 
 def task4():
     pass
@@ -103,11 +107,10 @@ def main():
     # Now setup training data
     word_list = task2(training_data, 3, 300)
     
-    # for i in range(len(word_list)):
-    # print(len(word_list))
-    # for i in range(10):
-    #     print(word_list[i])
-     
+    # Now run task3
+    task3(word_list, training_data, training_lables)
+    
+    
      
 print(("="*50), "Main", ("="*50))
 main()
