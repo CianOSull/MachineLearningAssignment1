@@ -46,23 +46,6 @@ def task1():
     return training_data, training_labels, test_data, test_labels
 
 def task2(training_data):
-   
-    
-    # iloc gets a row from the dataframe as a series with the index put in
-    # values gets all the values in that seires
-    # print(training_data.iloc[0].values[0].split())
-    
-    test = training_data.iloc[0].values[0]
-    # Basically this just goes the entire string and puts all the alphanum
-    # and white space characters into a new string.
-    # White space characters are kept so the string can be split
-    test = "".join(c for c in test if c.isalnum() or c == " ")
-    # print(test.split())
-    
-    # print(training_data.iloc[0].values[0])
-    # training_data.iloc[0].values[0] = "Test"
-    # print(training_data.iloc[0].values[0])
-    
     # Index stores the current enumerated count in this for loop
     # row value contians the string from training_data
     for index, row_value in enumerate(training_data['Review']):
@@ -74,6 +57,8 @@ def task2(training_data):
         transformedValue = transformedValue.split()
         
         # Set the value of the row in training to transformedValue
+        # iloc gets a row from the dataframe as a series with the index put in
+        # values gets all the values in that seires
         training_data.iloc[index].values[index] = transformedValue
         break
     
