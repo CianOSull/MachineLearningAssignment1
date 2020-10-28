@@ -30,6 +30,10 @@ def task1():
     # # Print the count of labels for training and test
     # print(len(training_labels[training_labels["Sentiment"] == "positive"]))
     
+    # Task 4 mentions that these were obtained in task 1 so thats why they are here to be returned
+    total_positive = len(training_labels[training_labels["Sentiment"] == "positive"])
+    total_negative = len(training_labels[training_labels["Sentiment"] == "negative"])
+    
     print("The number of postive reviews in the training set is >>>: ", 
           len(training_labels[training_labels["Sentiment"] == "positive"]))
     
@@ -43,7 +47,7 @@ def task1():
           len(training_labels[test_labels["Sentiment"] == "negative"]))
     print(("="*50))
     
-    return training_data, training_labels, test_data, test_labels
+    return training_data, training_labels, test_data, test_labels, total_positive, total_negative
 
 def task2(training_data, min_word_length, min_word_occ):
     word_list = []
@@ -121,9 +125,8 @@ def task3(word_list, training_data, training_labels):
     print(("="*50))
     
     return positive_word_reivew_count, negative_word_reivew_count
-    
 
-def task4(positive_word_reivew_count, negative_word_reivew_count):
+def task4(positive_word_reivew_count, negative_word_reivew_count, total_positive, total_negative):
     pass
 
 def task5():
@@ -137,7 +140,7 @@ def task7():
 
 def main():
     # First create the four needed lists 
-    training_data, training_lables, test_data, test_labels = task1()
+    training_data, training_lables, test_data, test_labels, total_positive, total_negative = task1()
     
     # Now setup training data
     # Setting a min word count of 4 because manjority of non sentiment words
@@ -149,7 +152,7 @@ def main():
     positive_word_reivew_count, negative_word_reivew_count = task3(word_list, training_data, training_lables)
     
     # Now do task4
-    task4(positive_word_reivew_count, negative_word_reivew_count)
+    task4(positive_word_reivew_count, negative_word_reivew_count, total_positive, total_negative)
     
     
      
