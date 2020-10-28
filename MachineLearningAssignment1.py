@@ -85,52 +85,36 @@ def task2(training_data, min_word_length, min_word_occ):
 
     return word_list
     
-def task3(word_list, training_data, training_labels):
-    
-    # This part is the only part I find weird might ask if they need be seperatted
-    # Now create a function that goes through all positive reviews in the 
-    # training set and counts for each of these words the number of reviews
-    # the word appears in [1 point]. 
-    # Do the same for all negative reviews as well [1 point].
-        
+def task3(word_list, training_data, training_labels):        
     # This will create a dictionary where each value from word list is the key
     # for the count of the amount of times that word appears.
     # Also dict.fromkeys(list,y) creates a dictionary with a list as a key
     # and whatever base values you want.
     word_occ_count = dict.fromkeys(word_list, 0)
     
-    # Set all of the reviews in the dataset to be lists of splits
+    # This checks if the a word appears in all positive and neagtive reviews 
+    # Get a list of all the words a list of strings to check
     for index, row_value in enumerate(training_data['Review']):
-        # Basically this just goes the entire string and puts all the alphanum
-        # and white space characters into a new string.
-        # White space characters are kept so the string can be split
         transformedValue = "".join(c for c in row_value if c.isalnum() or c == " ")
         transformedValue = transformedValue.lower()
         transformedValue = transformedValue.split()
-        training_data.iloc[index].values[0] = transformedValue
         
-    positive_reviews = training_data[training_labels['Sentiment'] == "positive"]
+        # For each word in word list
+        for word in word_list:
+            # Check if the word is in the string list
+            if word in transformedValue:
+                # If it is then increment its value in the dictionary
+                word_occ_count[word] = word_occ_count[word] + 1
+                # Then continue unto the next review
+                continue
     
-    for row_value in positive_reviews['Review']:
-         for word in word_list:
-             if word in row_value:
-                 word_occ_count[word] = word_occ_count[word] + 1
-                    
-    negative_reviews = training_data[training_labels['Sentiment'] == "negative"]
-    
-    for row_value in negative_reviews['Review']:
-         for word in word_list:
-             if word in row_value:
-                 word_occ_count[word] = word_occ_count[word] + 1
-    
-    # for i in word_list:
-    #     print("Positive count: ", positive_word_count[i])
-    #     print("Negative count: ", negative_word_count[i])
-    
+    print("Task 3 done")
     print(("="*50))
     
+    return word_occ_count
+    
 
-def task4():
+def task4(word_occ_count):
     pass
 
 def task5():
@@ -153,7 +137,10 @@ def main():
     word_list = task2(training_data, 4, 10000)
     
     # Now run task3
-    task3(word_list, training_data, training_lables)
+    word_occ_count = task3(word_list, training_data, training_lables)
+    
+    # Now do task4
+    task4(word_occ_count)
     
     
      
