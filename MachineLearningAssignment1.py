@@ -90,7 +90,8 @@ def task3(word_list, training_data, training_labels):
     # for the count of the amount of times that word appears.
     # Also dict.fromkeys(list,y) creates a dictionary with a list as a key
     # and whatever base values you want.
-    word_occ_count = dict.fromkeys(word_list, 0)
+    positive_word_reivew_count = dict.fromkeys(word_list, 0)
+    negative_word_reivew_count = dict.fromkeys(word_list, 0)
     
     # This checks if the a word appears in all positive and neagtive reviews 
     # Get a list of all the words a list of strings to check
@@ -98,23 +99,31 @@ def task3(word_list, training_data, training_labels):
         transformedValue = "".join(c for c in row_value if c.isalnum() or c == " ")
         transformedValue = transformedValue.lower()
         transformedValue = transformedValue.split()
-        
+               
         # For each word in word list
         for word in word_list:
             # Check if the word is in the string list
             if word in transformedValue:
-                # If it is then increment its value in the dictionary
-                word_occ_count[word] = word_occ_count[word] + 1
-                # Then continue unto the next review
-                continue
+                # Here check if the reivew is ngegative or positive
+                if training_labels.iloc[index].values[0] == "positive": 
+                   # If it is then increment its value in the dictionary
+                   positive_word_reivew_count[word] = positive_word_reivew_count[word] + 1
+                   # Then continue unto the next review
+                   continue
+                else:
+                   # If it is then increment its value in the dictionary
+                   negative_word_reivew_count[word] = negative_word_reivew_count[word] + 1
+                   # Then continue unto the next review
+                   continue
+                    
     
     print("Task 3 done")
     print(("="*50))
     
-    return word_occ_count
+    return positive_word_reivew_count, negative_word_reivew_count
     
 
-def task4(word_occ_count):
+def task4(positive_word_reivew_count, negative_word_reivew_count):
     pass
 
 def task5():
@@ -137,10 +146,10 @@ def main():
     word_list = task2(training_data, 4, 10000)
     
     # Now run task3
-    word_occ_count = task3(word_list, training_data, training_lables)
+    positive_word_reivew_count, negative_word_reivew_count = task3(word_list, training_data, training_lables)
     
     # Now do task4
-    task4(word_occ_count)
+    task4(positive_word_reivew_count, negative_word_reivew_count)
     
     
      
