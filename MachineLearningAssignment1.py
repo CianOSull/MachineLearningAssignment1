@@ -27,8 +27,8 @@ def task1():
     
     test_labels = review_df[review_df['Split'] == "train"][['Sentiment']]
     
-    # Print the count of labels for training and test
-    print(len(training_labels[training_labels["Sentiment"] == "positive"]))
+    # # Print the count of labels for training and test
+    # print(len(training_labels[training_labels["Sentiment"] == "positive"]))
     
     print("The number of postive reviews in the training set is >>>: ", 
           len(training_labels[training_labels["Sentiment"] == "positive"]))
@@ -46,7 +46,7 @@ def task1():
     return training_data, training_labels, test_data, test_labels
 
 def task2(training_data, min_word_length, min_word_occ):
-    world_list = []
+    word_list = []
     word_occurences = {}
     
     # Index stores the current enumerated count in this for loop
@@ -64,7 +64,6 @@ def task2(training_data, min_word_length, min_word_occ):
         # iloc gets a row from the dataframe as a series with the index put in
         # values gets all the values in that seires
         # training_data.iloc[index].values[0] = transformedValue
-        # break
         
         # Get the word occurences for each word and add each word to dict
         for word in transformedValue:
@@ -77,14 +76,45 @@ def task2(training_data, min_word_length, min_word_occ):
     # Add each word that occurs min times into word list
     for word in word_occurences:
         if min_word_occ <= word_occurences[word]:
-            world_list.append(word)
-
-    return world_list
+            word_list.append(word)
+            
+    # Just to check the size of word list
+    print(len(word_list))
     
-def task3():
-    pass
+    print(("="*50))
 
-def task4():
+    return word_list
+    
+def task3(word_list, training_data, training_labels):        
+    # This will create a dictionary where each value from word list is the key
+    # for the count of the amount of times that word appears.
+    # Also dict.fromkeys(list,y) creates a dictionary with a list as a key
+    # and whatever base values you want.
+    word_occ_count = dict.fromkeys(word_list, 0)
+    
+    # This checks if the a word appears in all positive and neagtive reviews 
+    # Get a list of all the words a list of strings to check
+    for index, row_value in enumerate(training_data['Review']):
+        transformedValue = "".join(c for c in row_value if c.isalnum() or c == " ")
+        transformedValue = transformedValue.lower()
+        transformedValue = transformedValue.split()
+        
+        # For each word in word list
+        for word in word_list:
+            # Check if the word is in the string list
+            if word in transformedValue:
+                # If it is then increment its value in the dictionary
+                word_occ_count[word] = word_occ_count[word] + 1
+                # Then continue unto the next review
+                continue
+    
+    print("Task 3 done")
+    print(("="*50))
+    
+    return word_occ_count
+    
+
+def task4(word_occ_count):
     pass
 
 def task5():
@@ -101,13 +131,18 @@ def main():
     training_data, training_lables, test_data, test_labels = task1()
     
     # Now setup training data
-    word_list = task2(training_data, 3, 300)
+    # Setting a min word count of 4 because manjority of non sentiment words
+    # like "the" or "and" probably arnt needed.  Will skip "but" though
+    # Keep min word occ small though for testing as large count can take a while
+    word_list = task2(training_data, 4, 10000)
     
-    # for i in range(len(word_list)):
-    # print(len(word_list))
-    # for i in range(10):
-    #     print(word_list[i])
-     
+    # Now run task3
+    word_occ_count = task3(word_list, training_data, training_lables)
+    
+    # Now do task4
+    task4(word_occ_count)
+    
+    
      
 print(("="*50), "Main", ("="*50))
 main()
