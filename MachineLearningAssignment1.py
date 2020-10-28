@@ -46,7 +46,7 @@ def task1():
     return training_data, training_labels, test_data, test_labels
 
 def task2(training_data, min_word_length, min_word_occ):
-    world_list = []
+    word_list = []
     word_occurences = {}
     
     # Index stores the current enumerated count in this for loop
@@ -76,25 +76,96 @@ def task2(training_data, min_word_length, min_word_occ):
     # Add each word that occurs min times into word list
     for word in word_occurences:
         if min_word_occ <= word_occurences[word]:
-            world_list.append(word)
+            word_list.append(word)
+            
+    # Just to check the size of word list
+    print(len(word_list))
+    
+    print(("="*50))
 
-    return world_list
+    return word_list
     
 def task3(word_list, training_data, training_labels):
-    # Task requirements broken down    
+    
+    # Done:
+    # Use the function created in task 2 to extract the set of all words of a 
+    # minimum length and with a minimum number of occurrences from the reviews 
+    # in the training set. 
+        
+    
     # Now create a function that goes through all positive reviews in the 
-    # training set and counts for each of these words the number of reviews 
+    # training set and counts for each of these words the number of reviews
     # the word appears in [1 point]. 
+    
     # Do the same for all negative reviews as well [1 point].
     
+    # Done
+    # The function should take the review set to be searched and the set of
+    # words to look for as input parameters 
+    
+    # Done
+    # and should return as output a dictionary that maps each word of the 
+    # input set to the number of reviews the word occurred in in the input set. 
+    
+    # Done 
+    # If a word is not found in any review in the input set it should map to 0.
+    
+        
     # This will create a dictionary where each value from word list is the key
     # for the count of the amount of times that word appears.
     # Also dict.fromkeys(list,y) creates a dictionary with a list as a key
     # and whatever base values you want.
-    postive_word_count = dict.fromkeys(word_list, 0)
+    positive_word_count = dict.fromkeys(word_list, 0)
     negative_word_count = dict.fromkeys(word_list, 0)
     
-    # Go through each review
+
+    # Set all of the reviews in the dataset to be lists of splits
+    for index, row_value in enumerate(training_data['Review']):
+        # Basically this just goes the entire string and puts all the alphanum
+        # and white space characters into a new string.
+        # White space characters are kept so the string can be split
+        transformedValue = "".join(c for c in row_value if c.isalnum() or c == " ")
+        transformedValue = transformedValue.lower()
+        transformedValue = transformedValue.split()
+        training_data.iloc[index].values[0] = transformedValue
+        
+    positive_reviews = training_data[training_labels['Sentiment'] == "positive"]
+    
+    # Count all the occurances of words in positive reviews
+    for index, row_value in enumerate(positive_reviews['Review']):
+        for string in positive_reviews.iloc[index].values[0]:
+            # Get each word from word list
+            for word in word_list:
+                # if word is equal to the string
+                if word == string:
+                    # print(word)
+                    # print(string)
+                    positive_word_count[word] = positive_word_count[word] + 1
+        # break
+                    
+    negative_reviews = training_data[training_labels['Sentiment'] == "negative"]
+    
+    # Count all the occurances of words in positive reviews
+    for index, row_value in enumerate(negative_reviews['Review']):
+        for string in negative_reviews.iloc[index].values[0]:
+            # Get each word from word list
+            for word in word_list:
+                # if word is equal to the string
+                if word == string:
+                    # print(word)
+                    # print(string)
+                    negative_word_count[word] = negative_word_count[word] + 1
+        # break
+                    
+    for i in word_list:
+        print("Positive count: ", positive_word_count[i])
+        print("Negative count: ", negative_word_count[i])
+    
+    print(("="*50))
+
+def task4():
+    
+        # Go through each review
     # for index, row_value in enumerate(training_data['Review']):
     #     # if the index current value of the training label is positive
     #     if training_labels.iloc[index].values[0] == "positive":
@@ -113,54 +184,6 @@ def task3(word_list, training_data, training_labels):
     #      print("Positive index")
 
     # print((training_data[training_labels['Sentiment'] == "positive"]).head())
-    
-    for index, row_value in enumerate(training_data['Review']):
-        # Basically this just goes the entire string and puts all the alphanum
-        # and white space characters into a new string.
-        # White space characters are kept so the string can be split
-        transformedValue = "".join(c for c in row_value if c.isalnum() or c == " ")
-        transformedValue = transformedValue.lower()
-        transformedValue = transformedValue.split()
-        training_data.iloc[index].values[0] = transformedValue
-    
-        
-    positive_reviews = training_data[training_labels['Sentiment'] == "positive"]
-    
-    # Count all the occurances of words in positive reviews
-    for index, row_value in enumerate(positive_reviews['Review']):
-        # transformedValue = "".join(c for c in row_value if c.isalnum() or c == " ")
-        # transformedValue = transformedValue.lower()
-        # transformedValue = transformedValue.split()
-        
-        for string in positive_reviews.iloc[index].values[0]:
-            # Get each word from word list
-            for word in word_list:
-                # if word is equal to the string
-                if word == string:
-                    # print(word)
-                    # print(string)
-                    postive_word_count[word] = postive_word_count[word] + 1
-                    
-    negative_reviews = training_data[training_labels['Sentiment'] == "negative"]
-    
-    # Count all the occurances of words in positive reviews
-    for index, row_value in enumerate(negative_reviews['Review']):
-        # transformedValue = "".join(c for c in row_value if c.isalnum() or c == " ")
-        # transformedValue = transformedValue.lower()
-        # transformedValue = transformedValue.split()
-        
-        for string in negative_reviews.iloc[index].values[0]:
-            # Get each word from word list
-            for word in word_list:
-                # if word is equal to the string
-                if word == string:
-                    # print(word)
-                    # print(string)
-                    negative_word_count[word] = negative_word_count[word] + 1
-        
-    print(("="*50))
-
-def task4():
     pass
 
 def task5():
@@ -177,7 +200,10 @@ def main():
     training_data, training_lables, test_data, test_labels = task1()
     
     # Now setup training data
-    word_list = task2(training_data, 3, 300)
+    # Setting a min word count of 4 because manjority of non sentiment words
+    # like "the" or "and" probably arnt needed.  Will skip "but" though
+    # Keep min word occ small though for testing as large count can take a while
+    word_list = task2(training_data, 4, 10000)
     
     # Now run task3
     task3(word_list, training_data, training_lables)
