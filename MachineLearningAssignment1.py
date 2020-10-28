@@ -87,38 +87,18 @@ def task2(training_data, min_word_length, min_word_occ):
     
 def task3(word_list, training_data, training_labels):
     
-    # Done:
-    # Use the function created in task 2 to extract the set of all words of a 
-    # minimum length and with a minimum number of occurrences from the reviews 
-    # in the training set. 
-        
-    
+    # This part is the only part I find weird might ask if they need be seperatted
     # Now create a function that goes through all positive reviews in the 
     # training set and counts for each of these words the number of reviews
     # the word appears in [1 point]. 
-    
     # Do the same for all negative reviews as well [1 point].
-    
-    # Done
-    # The function should take the review set to be searched and the set of
-    # words to look for as input parameters 
-    
-    # Done
-    # and should return as output a dictionary that maps each word of the 
-    # input set to the number of reviews the word occurred in in the input set. 
-    
-    # Done 
-    # If a word is not found in any review in the input set it should map to 0.
-    
         
     # This will create a dictionary where each value from word list is the key
     # for the count of the amount of times that word appears.
     # Also dict.fromkeys(list,y) creates a dictionary with a list as a key
     # and whatever base values you want.
-    positive_word_count = dict.fromkeys(word_list, 0)
-    negative_word_count = dict.fromkeys(word_list, 0)
+    word_occ_count = dict.fromkeys(word_list, 0)
     
-
     # Set all of the reviews in the dataset to be lists of splits
     for index, row_value in enumerate(training_data['Review']):
         # Basically this just goes the entire string and puts all the alphanum
@@ -131,59 +111,26 @@ def task3(word_list, training_data, training_labels):
         
     positive_reviews = training_data[training_labels['Sentiment'] == "positive"]
     
-    # Count all the occurances of words in positive reviews
-    for index, row_value in enumerate(positive_reviews['Review']):
-        for string in positive_reviews.iloc[index].values[0]:
-            # Get each word from word list
-            for word in word_list:
-                # if word is equal to the string
-                if word == string:
-                    # print(word)
-                    # print(string)
-                    positive_word_count[word] = positive_word_count[word] + 1
-        # break
+    for row_value in positive_reviews['Review']:
+         for word in word_list:
+             if word in row_value:
+                 word_occ_count[word] = word_occ_count[word] + 1
                     
     negative_reviews = training_data[training_labels['Sentiment'] == "negative"]
     
-    # Count all the occurances of words in positive reviews
-    for index, row_value in enumerate(negative_reviews['Review']):
-        for string in negative_reviews.iloc[index].values[0]:
-            # Get each word from word list
-            for word in word_list:
-                # if word is equal to the string
-                if word == string:
-                    # print(word)
-                    # print(string)
-                    negative_word_count[word] = negative_word_count[word] + 1
-        # break
-                    
-    for i in word_list:
-        print("Positive count: ", positive_word_count[i])
-        print("Negative count: ", negative_word_count[i])
+    for row_value in negative_reviews['Review']:
+         for word in word_list:
+             if word in row_value:
+                 word_occ_count[word] = word_occ_count[word] + 1
+    
+    # for i in word_list:
+    #     print("Positive count: ", positive_word_count[i])
+    #     print("Negative count: ", negative_word_count[i])
     
     print(("="*50))
+    
 
 def task4():
-    
-        # Go through each review
-    # for index, row_value in enumerate(training_data['Review']):
-    #     # if the index current value of the training label is positive
-    #     if training_labels.iloc[index].values[0] == "positive":
-    #         # check each string in training data index
-    #         for string in training_data.iloc[index].values[0]:
-    #             # Get each word from word list
-    #             for word in word_list:
-    #                 # if word is equal to the string
-    #                 if word == string:
-    #                     postive_word_count[word] += 1
-    
-    # for index, row_value in enumerate(training_data['Review']):
-    #  # if the index current value of the training label is positive
-    #  if training_labels.iloc[index].values[0] == "positive":
-    #      # check each string in training data index
-    #      print("Positive index")
-
-    # print((training_data[training_labels['Sentiment'] == "positive"]).head())
     pass
 
 def task5():
