@@ -18,17 +18,25 @@ def task1():
     # print("="*50)
     
     # Create the four lists
-    # This gets every row in review where split = train
+    # This gets every row in review where split = train and creats a df with 
+    # the review column
     training_data = review_df[review_df['Split'] == "train"][['Review']]
     
     training_labels = review_df[review_df['Split'] == "train"][['Sentiment']]
     
     test_data = review_df[review_df['Split'] == "test"][['Review']]
     
-    test_labels = review_df[review_df['Split'] == "train"][['Sentiment']]
+    test_labels = review_df[review_df['Split'] == "test"][['Sentiment']]
     
     # # Print the count of labels for training and test
     # print(len(training_labels[training_labels["Sentiment"] == "positive"]))
+    
+    # Task 4 needs total for prior
+    total_reviews = len(training_labels)
+    # print(total_reviews)
+    # Task 4 mentions that these were obtained in task 1 so thats why they are here to be returned
+    total_positive = len(training_labels[training_labels["Sentiment"] == "positive"])
+    total_negative = len(training_labels[training_labels["Sentiment"] == "negative"])
     
     print("The number of postive reviews in the training set is >>>: ", 
           len(training_labels[training_labels["Sentiment"] == "positive"]))
@@ -37,13 +45,13 @@ def task1():
           len(training_labels[training_labels["Sentiment"] == "negative"]))
     
     print("The number of postive reviews in the evaluation set is >>>: ", 
-          len(training_labels[test_labels["Sentiment"] == "positive"]))
+          len(test_labels[test_labels["Sentiment"] == "positive"]))
     
     print("The number of negative reviews in the evaluation set is >>>: ",
-          len(training_labels[test_labels["Sentiment"] == "negative"]))
+          len(test_labels[test_labels["Sentiment"] == "negative"]))
     print(("="*50))
     
-    return training_data, training_labels, test_data, test_labels
+    return training_data, training_labels, test_data, test_labels, total_positive, total_negative, total_reviews
 
 def task2(training_data, min_word_length, min_word_occ):
     word_list = []
@@ -90,7 +98,8 @@ def task3(word_list, training_data, training_labels):
     # for the count of the amount of times that word appears.
     # Also dict.fromkeys(list,y) creates a dictionary with a list as a key
     # and whatever base values you want.
-    word_occ_count = dict.fromkeys(word_list, 0)
+    positive_word_reivew_count = dict.fromkeys(word_list, 0)
+    negative_word_reivew_count = dict.fromkeys(word_list, 0)
     
     # This checks if the a word appears in all positive and neagtive reviews 
     # Get a list of all the words a list of strings to check
@@ -98,24 +107,82 @@ def task3(word_list, training_data, training_labels):
         transformedValue = "".join(c for c in row_value if c.isalnum() or c == " ")
         transformedValue = transformedValue.lower()
         transformedValue = transformedValue.split()
-        
+               
         # For each word in word list
         for word in word_list:
             # Check if the word is in the string list
             if word in transformedValue:
-                # If it is then increment its value in the dictionary
-                word_occ_count[word] = word_occ_count[word] + 1
-                # Then continue unto the next review
-                continue
+                # Here check if the reivew is ngegative or positive
+                if training_labels.iloc[index].values[0] == "positive": 
+                   # If it is then increment its value in the dictionary
+                   positive_word_reivew_count[word] = positive_word_reivew_count[word] + 1
+                   # Then continue unto the next review
+                   continue
+                else:
+                   # If it is then increment its value in the dictionary
+                   negative_word_reivew_count[word] = negative_word_reivew_count[word] + 1
+                   # Then continue unto the next review
+                   continue
+                    
     
     print("Task 3 done")
     print(("="*50))
     
-    return word_occ_count
-    
+    return positive_word_reivew_count, negative_word_reivew_count
 
-def task4(word_occ_count):
-    pass
+def task4(positive_word_reivew_count, negative_word_reivew_count, total_positive, total_negative, total_reviews):
+    # Consider each word extracted in task 2 as a binary feature of a review 
+    # indicating that a word is either present in the review or absent in the 
+    # review. 
+    
+    
+    # Using the function created in task 3 to count the number of reviews each 
+    # of these features is present in, calculate the likelihoods
+    # 𝑃[𝑤𝑜𝑟𝑑 𝑖𝑠 𝑝𝑟𝑒𝑠𝑒𝑛𝑡 𝑖𝑛 𝑟𝑒𝑣𝑖𝑒𝑤|𝑟𝑒𝑣𝑖𝑒𝑤 𝑖𝑠 𝑝𝑜𝑠𝑖𝑡𝑖𝑣𝑒]
+    # and
+    # 𝑃[𝑤𝑜𝑟𝑑 𝑖𝑠 𝑝𝑟𝑒𝑠𝑒𝑛𝑡 𝑖𝑛 𝑟𝑒𝑣𝑖𝑒𝑤|𝑟𝑒𝑣𝑖𝑒𝑤 𝑖𝑠 𝑛𝑒𝑔𝑎𝑡𝑖𝑣𝑒]
+    # for each word in the feature vector.
+    # Create a function that calculates these likelihoods for all words 
+    # applying Laplace smoothing with a smoothing factor 𝛼 = 1 [1 point]. 
+    alpha = 1
+    
+    # Make dictionary with every word as keys and it will have the ratios
+    likelihood_positive = positive_word_reivew_count.copy()
+    # 𝑃[𝑤𝑜𝑟𝑑 𝑖𝑠 𝑝𝑟𝑒𝑠𝑒𝑛𝑡 𝑖𝑛 𝑟𝑒𝑣𝑖𝑒𝑤|𝑟𝑒𝑣𝑖𝑒𝑤 𝑖𝑠 𝑝𝑜𝑠𝑖𝑡𝑖𝑣𝑒]
+    for word in positive_word_reivew_count:
+        # so its positive review count for word / total number of positive reivews
+        likelihood_positive[word] = (positive_word_reivew_count[word] + alpha)/(total_positive + 2*alpha)
+    
+    # 𝑃[𝑤𝑜𝑟𝑑 𝑖𝑠 𝑝𝑟𝑒𝑠𝑒𝑛𝑡 𝑖𝑛 𝑟𝑒𝑣𝑖𝑒𝑤|𝑟𝑒𝑣𝑖𝑒𝑤 𝑖𝑠 𝑛𝑒𝑔𝑎𝑡𝑖𝑣𝑒]
+    likelihood_negative = positive_word_reivew_count.copy()
+    # 𝑃[𝑤𝑜𝑟𝑑 𝑖𝑠 𝑝𝑟𝑒𝑠𝑒𝑛𝑡 𝑖𝑛 𝑟𝑒𝑣𝑖𝑒𝑤|𝑟𝑒𝑣𝑖𝑒𝑤 𝑖𝑠 𝑝𝑜𝑠𝑖𝑡𝑖𝑣𝑒]
+    for word in negative_word_reivew_count:
+        # so its positive review count for word / total number of positive reivews
+        likelihood_negative[word] = (negative_word_reivew_count[word] + alpha)/(total_negative + 2*alpha)
+    
+    
+    print("Likelihood positive word: ", list(positive_word_reivew_count)[0], "Ratio:", likelihood_positive[list(positive_word_reivew_count)[0]])
+    print("Negative positive word: ", list(negative_word_reivew_count)[0], "Ratio:", likelihood_negative[list(negative_word_reivew_count)[0]])
+    
+    # The function should take the two mappings created in task 3 and the 
+    # total number of positive/negative reviews obtained in task 1 as input 
+    # and return a dictionary mapping each feature word to the likelihood 
+    # probability that a word is present in a review given its class being 
+    # either positive or negative.
+    
+    # Also calculate the priors
+    # 𝑃[𝑟𝑒𝑣𝑖𝑒𝑤 𝑖𝑠 𝑝𝑜𝑠𝑖𝑡𝑖𝑣𝑒]
+    # and
+    # 𝑃[𝑟𝑒𝑣𝑖𝑒𝑤 𝑖𝑠 𝑛𝑒𝑔𝑎𝑡𝑖𝑣𝑒]
+    # by considering the fraction of positive/negative reviews in the training 
+    # set [1 point].
+    prior_review_pos = total_positive/total_reviews
+    prior_review_neg = total_negative/total_reviews
+    
+    print("Prior Positive Ratio: ", prior_review_pos)
+    print("Prior Negative Ratio: ", prior_review_neg)
+    
+    return likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg
 
 def task5():
     pass
@@ -128,7 +195,7 @@ def task7():
 
 def main():
     # First create the four needed lists 
-    training_data, training_lables, test_data, test_labels = task1()
+    training_data, training_lables, test_data, test_labels, total_positive, total_negative, total_reviews = task1()
     
     # Now setup training data
     # Setting a min word count of 4 because manjority of non sentiment words
@@ -137,11 +204,12 @@ def main():
     word_list = task2(training_data, 4, 10000)
     
     # Now run task3
-    word_occ_count = task3(word_list, training_data, training_lables)
+    positive_word_reivew_count, negative_word_reivew_count = task3(word_list, training_data, training_lables)
     
     # Now do task4
-    task4(word_occ_count)
+    likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg = task4(positive_word_reivew_count, negative_word_reivew_count, total_positive, total_negative, total_reviews)
     
+    # Now do task5
     
      
 print(("="*50), "Main", ("="*50))
