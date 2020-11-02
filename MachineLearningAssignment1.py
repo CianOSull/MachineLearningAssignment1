@@ -142,9 +142,27 @@ def task4(positive_word_reivew_count, negative_word_reivew_count, total_positive
     # and
     # 𝑃[𝑤𝑜𝑟𝑑 𝑖𝑠 𝑝𝑟𝑒𝑠𝑒𝑛𝑡 𝑖𝑛 𝑟𝑒𝑣𝑖𝑒𝑤|𝑟𝑒𝑣𝑖𝑒𝑤 𝑖𝑠 𝑛𝑒𝑔𝑎𝑡𝑖𝑣𝑒]
     # for each word in the feature vector.
-    
     # Create a function that calculates these likelihoods for all words 
     # applying Laplace smoothing with a smoothing factor 𝛼 = 1 [1 point]. 
+    alpha = 1
+    
+    # Make dictionary with every word as keys and it will have the ratios
+    likelihood_positive = positive_word_reivew_count.copy()
+    # 𝑃[𝑤𝑜𝑟𝑑 𝑖𝑠 𝑝𝑟𝑒𝑠𝑒𝑛𝑡 𝑖𝑛 𝑟𝑒𝑣𝑖𝑒𝑤|𝑟𝑒𝑣𝑖𝑒𝑤 𝑖𝑠 𝑝𝑜𝑠𝑖𝑡𝑖𝑣𝑒]
+    for word in positive_word_reivew_count:
+        # so its positive review count for word / total number of positive reivews
+        likelihood_positive[word] = (positive_word_reivew_count[word] + alpha)/(total_positive + 2*alpha)
+    
+    # 𝑃[𝑤𝑜𝑟𝑑 𝑖𝑠 𝑝𝑟𝑒𝑠𝑒𝑛𝑡 𝑖𝑛 𝑟𝑒𝑣𝑖𝑒𝑤|𝑟𝑒𝑣𝑖𝑒𝑤 𝑖𝑠 𝑛𝑒𝑔𝑎𝑡𝑖𝑣𝑒]
+    likelihood_negative = positive_word_reivew_count.copy()
+    # 𝑃[𝑤𝑜𝑟𝑑 𝑖𝑠 𝑝𝑟𝑒𝑠𝑒𝑛𝑡 𝑖𝑛 𝑟𝑒𝑣𝑖𝑒𝑤|𝑟𝑒𝑣𝑖𝑒𝑤 𝑖𝑠 𝑝𝑜𝑠𝑖𝑡𝑖𝑣𝑒]
+    for word in negative_word_reivew_count:
+        # so its positive review count for word / total number of positive reivews
+        likelihood_negative[word] = (negative_word_reivew_count[word] + alpha)/(total_negative + 2*alpha)
+    
+    
+    print("Likelihood positive word: ", list(positive_word_reivew_count)[0], "Ratio:", likelihood_positive[list(positive_word_reivew_count)[0]])
+    print("Negative positive word: ", list(negative_word_reivew_count)[0], "Ratio:", likelihood_negative[list(negative_word_reivew_count)[0]])
     
     # The function should take the two mappings created in task 3 and the 
     # total number of positive/negative reviews obtained in task 1 as input 
@@ -161,9 +179,10 @@ def task4(positive_word_reivew_count, negative_word_reivew_count, total_positive
     prior_review_pos = total_positive/total_reviews
     prior_review_neg = total_negative/total_reviews
     
-    print("Prior Review Ratios: ", prior_review_pos, prior_review_neg)
+    print("Prior Positive Ratio: ", prior_review_pos)
+    print("Prior Negative Ratio: ", prior_review_neg)
     
-    pass
+    return likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg
 
 def task5():
     pass
@@ -188,8 +207,9 @@ def main():
     positive_word_reivew_count, negative_word_reivew_count = task3(word_list, training_data, training_lables)
     
     # Now do task4
-    task4(positive_word_reivew_count, negative_word_reivew_count, total_positive, total_negative, total_reviews)
+    likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg = task4(positive_word_reivew_count, negative_word_reivew_count, total_positive, total_negative, total_reviews)
     
+    # Now do task5
     
      
 print(("="*50), "Main", ("="*50))
