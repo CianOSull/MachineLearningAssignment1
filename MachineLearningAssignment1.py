@@ -214,8 +214,10 @@ def task5(likelihood_positive, likelihood_negative, prior_review_pos, prior_revi
         # print("Log negative: ", logLikelihood_negative)
         
         if math.log(prior_review_pos) - math.log(prior_review_neg) < logLikelihood_positive - logLikelihood_negative:
+            # This one should be 1 for positive
             prediction.append(1)
         else:
+            # This one should be 0 for negative
             prediction.append(0)
     
     # The function should take as input the new review text as string as well 
