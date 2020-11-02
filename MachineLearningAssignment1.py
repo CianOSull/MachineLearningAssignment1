@@ -9,6 +9,7 @@ Student number: R00160696
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
 def task1():
     # First load the excel sheet and take a peek at whats inside
@@ -182,15 +183,51 @@ def task4(positive_word_reivew_count, negative_word_reivew_count, total_positive
     print("Prior Positive Ratio: ", prior_review_pos)
     print("Prior Negative Ratio: ", prior_review_neg)
     
+    print("Task 4 done")
+    print(("="*50))
+    
     return likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg
 
-def task5():
-    pass
+def task5(likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg, test_data, test_labels, word_list):
+    # Use the likelihood functions and priors created in task 4 to now create 
+    # a Naïve Bayes classifier for predicting the sentiment label for a new 
+    # review text [2 points].
+    # Remember to use logarithms of the probabilities for numerical stability. 
+    
+    prediction = []
+    for index, row_value in enumerate(test_data['Review']):
+        logLikelihood_positive = 0
+        logLikelihood_negative = 0
+        
+        transformedValue = "".join(c for c in row_value if c.isalnum() or c == " ")
+        transformedValue = transformedValue.lower()
+        transformedValue = transformedValue.split()
+               
+        # print(transformedValue)
+        
+        for word in transformedValue:
+            if word in word_list:
+                logLikelihood_positive = logLikelihood_positive + math.log(likelihood_positive[word])
+                logLikelihood_negative = logLikelihood_negative + math.log(likelihood_negative[word])
+        
+        # print("Log postive: ", logLikelihood_positive)
+        # print("Log negative: ", logLikelihood_negative)
+        
+        if math.log(prior_review_pos) - math.log(prior_review_neg) < logLikelihood_positive - logLikelihood_negative:
+            # This one should be 1 for positive
+            prediction.append(1)
+        else:
+            # This one should be 0 for negative
+            prediction.append(0)
+    
+    # The function should take as input the new review text as string as well 
+    # as the priors and likelihoods calculated in task 4. It should produce as 
+    # output the predicted sentiment label for the new review 
+    # (i.e. either “positive” or “negative”).
+            
+    return prediction
 
 def task6():
-    pass
-
-def task7():
     pass
 
 def main():
@@ -210,8 +247,8 @@ def main():
     likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg = task4(positive_word_reivew_count, negative_word_reivew_count, total_positive, total_negative, total_reviews)
     
     # Now do task5
+    prediction = task5(likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg, test_data, test_labels, word_list)
     
-     
 print(("="*50), "Main", ("="*50))
 main()
 
