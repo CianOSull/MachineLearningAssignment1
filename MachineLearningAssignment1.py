@@ -194,11 +194,6 @@ def task5(likelihood_positive, likelihood_negative, prior_review_pos, prior_revi
     # review text [2 points].
     # Remember to use logarithms of the probabilities for numerical stability. 
     
-    # The function should take as input the new review text as string as well 
-    # as the priors and likelihoods calculated in task 4. It should produce as 
-    # output the predicted sentiment label for the new review 
-    # (i.e. either “positive” or “negative”).
-
     prediction = []
     for index, row_value in enumerate(test_data['Review']):
         logLikelihood_positive = 0
@@ -222,13 +217,15 @@ def task5(likelihood_positive, likelihood_negative, prior_review_pos, prior_revi
             prediction.append(1)
         else:
             prediction.append(0)
+    
+    # The function should take as input the new review text as string as well 
+    # as the priors and likelihoods calculated in task 4. It should produce as 
+    # output the predicted sentiment label for the new review 
+    # (i.e. either “positive” or “negative”).
             
-    pass
+    return prediction
 
 def task6():
-    pass
-
-def task7():
     pass
 
 def main():
@@ -248,7 +245,7 @@ def main():
     likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg = task4(positive_word_reivew_count, negative_word_reivew_count, total_positive, total_negative, total_reviews)
     
     # Now do task5
-    task5(likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg, test_data, test_labels, word_list)
+    prediction = task5(likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg, test_data, test_labels, word_list)
     
 print(("="*50), "Main", ("="*50))
 main()
