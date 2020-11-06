@@ -232,14 +232,21 @@ def task5(likelihood_positive, likelihood_negative, prior_review_pos, prior_revi
     
     return prediction
 
+def process_text(text):
+    text = "".join(c for c in text if c.isalnum() or c == " ")
+    text = text.lower()
+    text = text.split()
+    return text
+
 def classifier(feature_data, target_labels, total_positive, total_negative, total_reviews, min_word_length, min_word_occ):
     word_list = []
     word_occurences = {}
     
     for index in range(len(feature_data)):
-        transformedValue = "".join(c for c in feature_data.values[index][0] if c.isalnum() or c == " ")
-        transformedValue = transformedValue.lower()
-        transformedValue = transformedValue.split()
+        # transformedValue = "".join(c for c in feature_data.values[index][0] if c.isalnum() or c == " ")
+        # transformedValue = transformedValue.lower()
+        # transformedValue = transformedValue.split()
+        transformedValue = process_text(feature_data.values[index][0])
         
         for word in transformedValue:
             if (min_word_length <= len(word)):
@@ -260,9 +267,10 @@ def classifier(feature_data, target_labels, total_positive, total_negative, tota
     negative_word_reivew_count = dict.fromkeys(word_list, 0)
     
     for index in range(len(feature_data)):
-        transformedValue = "".join(c for c in feature_data.values[index][0] if c.isalnum() or c == " ")
-        transformedValue = transformedValue.lower()
-        transformedValue = transformedValue.split()
+        # transformedValue = "".join(c for c in feature_data.values[index][0] if c.isalnum() or c == " ")
+        # transformedValue = transformedValue.lower()
+        # transformedValue = transformedValue.split()
+        transformedValue = process_text(feature_data.values[index][0])
                
         for word in word_list:
             if word in transformedValue: 
@@ -305,9 +313,10 @@ def classifier(feature_data, target_labels, total_positive, total_negative, tota
         logLikelihood_positive = 0
         logLikelihood_negative = 0
         
-        transformedValue = "".join(c for c in feature_data.values[index][0] if c.isalnum() or c == " ")
-        transformedValue = transformedValue.lower()
-        transformedValue = transformedValue.split()
+        # transformedValue = "".join(c for c in feature_data.values[index][0] if c.isalnum() or c == " ")
+        # transformedValue = transformedValue.lower()
+        # transformedValue = transformedValue.split()
+        transformedValue = process_text(feature_data.values[index][0])
         
         for word in transformedValue:
             if word in word_list:
@@ -317,7 +326,7 @@ def classifier(feature_data, target_labels, total_positive, total_negative, tota
         if math.log(prior_review_pos) - math.log(prior_review_neg) < logLikelihood_positive - logLikelihood_negative:
             prediction.append(1)
         else:
-            prediction.append(0)
+            prediction.append(0) 
     
     # print(prediction)
     return prediction
@@ -325,8 +334,8 @@ def classifier(feature_data, target_labels, total_positive, total_negative, tota
     
 def task6():
     # Create a k-fold cross-validation procedure for splitting the training 
-    # set into k folds 
-    kf = model_selection.KFold(n_splits=6, shuffle=True)
+    # set into k folds `
+    kf = model_selection.KFold(n_splits=3, shuffle=True)
     
     # and train the classifier created in tasks 2-5 on the training subset [1 point]. 
     training_data, training_lables, test_data, test_labels, total_positive, total_negative, total_reviews = task1()
@@ -334,25 +343,26 @@ def task6():
     all_results = []
     mean_results = []
     
-    # # Compare different accuracy scores for different choices 
-    # # (1,2,3,4,5,6,7,8,9,10) of the word length parameter as defined in task 2 [1 point]. 
-    # for i in range(1,11):
-    #     for train_index, test_index in kf.split(training_data):
-    #         results = classifier(training_data.iloc[train_index], training_lables.iloc[train_index], total_positive, total_negative, total_reviews, i, 10000)
+    # Compare different accuracy scores for different choices 
+    # (1,2,3,4,5,6,7,8,9,10) of the word length parameter as defined in task 2 [1 point]. 
+    for i in range(1,11):
+        for train_index, test_index in kf.split(training_data):
+            results = classifier(training_data.iloc[train_index], training_lables.iloc[train_index], total_positive, total_negative, total_reviews, i, 10000)
             
-    #         # Evaluate the classification accuracy, i.e. the fraction of correctly 
-    #         # classifier samples, on the evaluation subset [1 point]
-    #         all_results.append(metrics.accuracy_score(results, training_lables.iloc[train_index]))
-    #         print(("="*50))
+            # Evaluate the classification accuracy, i.e. the fraction of correctly 
+            # classifier samples, on the evaluation subset [1 point]
+            all_results.append(metrics.accuracy_score(results, training_lables.iloc[train_index]))
+            print(("="*50))
     
-    #     # and use this procedure to calculate the mean accuracy score [1 point]. 
-    #     mean_results.append(np.mean(all_results))
+        # and use this procedure to calculate the mean accuracy score [1 point]. 
+        mean_results.append(np.mean(all_results))
     
-    # # Select the optimal word length parameter [1 point] 
-    # print("Mean Results: ", mean_results)
-    # highest_min_word_len = mean_results.index(max(mean_results))+1
-    # print("Min word length, highest accuracy: ", highest_min_word_len)
-    highest_min_word_len = 2
+    # Select the optimal word length parameter [1 point] 
+    print("Mean Results: ", mean_results)
+    highest_min_word_len = mean_results.index(max(mean_results))+1
+    print("highest accuracy Min word length: ", highest_min_word_len)
+    
+    # highest_min_word_len = 2
     
     # and evaluate the resulting classifier on the test set extracted in task 1.
     true_positive = []
@@ -380,11 +390,10 @@ def task6():
     # - The percentage of true positive [1 point], true negatives [1 point], false positives [1
     # point] and false negatives [1 point]
     # print(C)
-    print("True positives:", np.sum(true_positive), np.sum(true_positive)/len(test_data))
-    print("True negatives:", np.sum(true_negative), np.sum(true_negative)/len(test_data))
-    print("False positives:", np.sum(false_postiive), np.sum(false_postiive)/len(test_data))
-    print("False negatives:", np.sum(false_negatives), np.sum(false_negatives)/len(test_data))
-    print("Test data amount: ", len(test_data))
+    print("True positives:", round(np.sum(true_positive)/len(test_data)), "%")
+    print("True negatives:", round(np.sum(true_negative)/len(test_data)), "%")
+    print("False positives:", round(np.sum(false_postiive)/len(test_data)), "%")
+    print("False negatives:", round(np.sum(false_negatives)/len(test_data)), "%")
             
     # - The classification accuracy score, i.e. the fraction of correctly classified samples [1 point]
     print("Test Accuracy: ", np.mean(all_results))
