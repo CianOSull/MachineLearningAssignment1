@@ -232,11 +232,9 @@ def task5(likelihood_positive, likelihood_negative, prior_review_pos, prior_revi
     
     return prediction
 
-def classifier(feature_data, target_labels, total_positive, total_negative, total_reviews):
+def classifier(feature_data, target_labels, total_positive, total_negative, total_reviews, min_word_length, min_word_occ):
     word_list = []
     word_occurences = {}
-    min_word_length = 3
-    min_word_occ = 10000
     
     for index in range(len(feature_data)):
         transformedValue = "".join(c for c in feature_data.values[index][0] if c.isalnum() or c == " ")
@@ -255,7 +253,7 @@ def classifier(feature_data, target_labels, total_positive, total_negative, tota
             word_list.append(word)
             
     # print(word_list)
-    print(("="*50))
+    # print(("="*50))
     # ======================================================
     
     positive_word_reivew_count = dict.fromkeys(word_list, 0)
@@ -279,7 +277,7 @@ def classifier(feature_data, target_labels, total_positive, total_negative, tota
     # print(positive_word_reivew_count)
     # print("===")
     # print(negative_word_reivew_count)
-    print(("="*50))
+    # print(("="*50))
     
     # =====================
     alpha = 1
@@ -299,7 +297,7 @@ def classifier(feature_data, target_labels, total_positive, total_negative, tota
     # print(likelihood_negative)
     # print("===")
     # print(likelihood_negative)
-    print(("="*50))
+    # print(("="*50))
     
     # ==============================================
     prediction = []
@@ -323,7 +321,7 @@ def classifier(feature_data, target_labels, total_positive, total_negative, tota
     
     # print(prediction)
     return prediction
-    print(("="*50))
+    # print(("="*50))
     
 def task6():
     # Create a k-fold cross-validation procedure for splitting the training 
@@ -333,36 +331,43 @@ def task6():
     # and train the classifier created in tasks 2-5 on the training subset [1 point]. 
     training_data, training_lables, test_data, test_labels, total_positive, total_negative, total_reviews = task1()
     
-    allResults = []
-    
-    for train_index, test_index in kf.split(training_data):
-        # training_data.iloc[index]
-        # print("Train index", train_index) 
-        # print("Test index: ", test_index)
-        # print("Traning data subset using train_index: ", training_data.iloc[train_index])
-        results = classifier(training_data.iloc[train_index], training_lables.iloc[train_index], total_positive, total_negative, total_reviews)
-        
-        # print("Train index size: ", len(training_data.iloc[train_index]))
-        # print("Test Index size: ", len(training_lables.iloc[train_index]))
-        # print("Results size: ", len(results))
-        
-        # Confusion matrix 
-        # c = metrics.confusion_matrix(target[test_index], results) 
-        
-        # Evaluate the classification accuracy, i.e. the fraction of correctly 
-        # classifier samples, on the evaluation subset [1 point]
-        allResults.append(metrics.accuracy_score(results, training_lables.iloc[train_index]))
-    
-    # and use this procedure to calculate the mean accuracy score [1 point]. 
-    print("Mean Accuracy is", np.mean(allResults))
+    all_results = []
+    mean_results = []
     
     # Compare different accuracy scores for different choices 
     # (1,2,3,4,5,6,7,8,9,10) of the word length parameter as defined in task 2 [1 point]. 
+    for i in range(1,11):
+        for train_index, test_index in kf.split(training_data):
+            results = classifier(training_data.iloc[train_index], training_lables.iloc[train_index], total_positive, total_negative, total_reviews, i, 10000)
+            
+            # Evaluate the classification accuracy, i.e. the fraction of correctly 
+            # classifier samples, on the evaluation subset [1 point]
+            all_results.append(metrics.accuracy_score(results, training_lables.iloc[train_index]))
+            print(("="*50))
+    
+        # and use this procedure to calculate the mean accuracy score [1 point]. 
+        mean_results.append(np.mean(all_results))
     
     # Select the optimal word length parameter [1 point] 
+    print("Mean Results: ", mean_results)
+    highest_min_word_len = mean_results.index(max(mean_results))+1
+    print("Min word length, highest accuracy: ", highest_min_word_len)
+    
     # and evaluate the resulting classifier on the test set extracted in task 1.
+    for train_index, test_index in kf.split(test_data):
+            test_results = classifier(test_data.iloc[train_index], test_labels.iloc[train_index], total_positive, total_negative, total_reviews, highest_min_word_len, 10000)
+            
+            # Evaluate the classification accuracy, i.e. the fraction of correctly 
+            # classifier samples, on the evaluation subset [1 point]
+            all_results.append(metrics.accuracy_score(results, training_lables.iloc[train_index]))
+            print(("="*50))
+    print("Test Accuracy: ", np.mean(all_results))
     
     # The final evaluation should contain:
+    
+           # Confusion matrix 
+        # c = metrics.confusion_matrix(target[test_index], results) 
+    
     # - The confusion matrix for the classification [1 point]
     # - The percentage of true positive [1 point], true negatives [1 point], false positives [1
     # point] and false negatives [1 point]
