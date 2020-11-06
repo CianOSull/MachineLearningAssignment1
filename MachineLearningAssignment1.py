@@ -334,47 +334,61 @@ def task6():
     all_results = []
     mean_results = []
     
-    # Compare different accuracy scores for different choices 
-    # (1,2,3,4,5,6,7,8,9,10) of the word length parameter as defined in task 2 [1 point]. 
-    for i in range(1,11):
-        for train_index, test_index in kf.split(training_data):
-            results = classifier(training_data.iloc[train_index], training_lables.iloc[train_index], total_positive, total_negative, total_reviews, i, 10000)
+    # # Compare different accuracy scores for different choices 
+    # # (1,2,3,4,5,6,7,8,9,10) of the word length parameter as defined in task 2 [1 point]. 
+    # for i in range(1,11):
+    #     for train_index, test_index in kf.split(training_data):
+    #         results = classifier(training_data.iloc[train_index], training_lables.iloc[train_index], total_positive, total_negative, total_reviews, i, 10000)
             
-            # Evaluate the classification accuracy, i.e. the fraction of correctly 
-            # classifier samples, on the evaluation subset [1 point]
-            all_results.append(metrics.accuracy_score(results, training_lables.iloc[train_index]))
-            print(("="*50))
+    #         # Evaluate the classification accuracy, i.e. the fraction of correctly 
+    #         # classifier samples, on the evaluation subset [1 point]
+    #         all_results.append(metrics.accuracy_score(results, training_lables.iloc[train_index]))
+    #         print(("="*50))
     
-        # and use this procedure to calculate the mean accuracy score [1 point]. 
-        mean_results.append(np.mean(all_results))
+    #     # and use this procedure to calculate the mean accuracy score [1 point]. 
+    #     mean_results.append(np.mean(all_results))
     
-    # Select the optimal word length parameter [1 point] 
-    print("Mean Results: ", mean_results)
-    highest_min_word_len = mean_results.index(max(mean_results))+1
-    print("Min word length, highest accuracy: ", highest_min_word_len)
+    # # Select the optimal word length parameter [1 point] 
+    # print("Mean Results: ", mean_results)
+    # highest_min_word_len = mean_results.index(max(mean_results))+1
+    # print("Min word length, highest accuracy: ", highest_min_word_len)
+    highest_min_word_len = 2
     
     # and evaluate the resulting classifier on the test set extracted in task 1.
-    for train_index, test_index in kf.split(test_data):
-            test_results = classifier(test_data.iloc[train_index], test_labels.iloc[train_index], total_positive, total_negative, total_reviews, highest_min_word_len, 10000)
-            
-            # Evaluate the classification accuracy, i.e. the fraction of correctly 
-            # classifier samples, on the evaluation subset [1 point]
-            all_results.append(metrics.accuracy_score(results, training_lables.iloc[train_index]))
-            print(("="*50))
-    print("Test Accuracy: ", np.mean(all_results))
+    true_positive = []
+    true_negative = []
+    false_postiive = []
+    false_negatives = []
+    
+    test_results = classifier(test_data, test_labels, total_positive, total_negative, total_reviews, highest_min_word_len, 10000)
+    
+    # Evaluate the classification accuracy, i.e. the fraction of correctly 
+    # classifier samples, on the evaluation subset [1 point]
+    all_results.append(metrics.accuracy_score(test_results, test_labels))
     
     # The final evaluation should contain:
-    
-           # Confusion matrix 
-        # c = metrics.confusion_matrix(target[test_index], results) 
-    
     # - The confusion matrix for the classification [1 point]
+    C = metrics.confusion_matrix(test_labels, test_results)
+    
+    true_positive.append(C[0,0])
+    true_negative.append(C[1,1])            
+    false_postiive.append(C[1,0])
+    false_negatives.append(C[0,1])
+    
+    print(("="*50))
+
     # - The percentage of true positive [1 point], true negatives [1 point], false positives [1
     # point] and false negatives [1 point]
-    # - The classification accuracy score, i.e. the fraction of correctly classified samples [1
-    # point]
-
-    pass
+    # print(C)
+    print("True positives:", np.sum(true_positive), np.sum(true_positive)/len(test_data))
+    print("True negatives:", np.sum(true_negative), np.sum(true_negative)/len(test_data))
+    print("False positives:", np.sum(false_postiive), np.sum(false_postiive)/len(test_data))
+    print("False negatives:", np.sum(false_negatives), np.sum(false_negatives)/len(test_data))
+    print("Test data amount: ", len(test_data))
+            
+    # - The classification accuracy score, i.e. the fraction of correctly classified samples [1 point]
+    print("Test Accuracy: ", np.mean(all_results))
+    
 
 def main():
     # First create the four needed lists 
