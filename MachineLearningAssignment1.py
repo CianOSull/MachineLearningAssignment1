@@ -232,6 +232,33 @@ def task5(likelihood_positive, likelihood_negative, prior_review_pos, prior_revi
     
     return prediction
 
+def classifier(feature_data, feature_labels):
+    word_list = []
+    word_occurences = {}
+    min_word_length = 3
+    min_word_occ = 10000
+    
+    for index in range(len(feature_data)):
+         # print(feature_data.values[index][0])
+         # break
+        transformedValue = "".join(c for c in feature_data.values[index][0] if c.isalnum() or c == " ")
+        transformedValue = transformedValue.lower()
+        transformedValue = transformedValue.split()
+        
+        for word in transformedValue:
+            if (min_word_length <= len(word)):
+                if (word in word_occurences):
+                    word_occurences[word] = word_occurences[word] + 1
+                else:
+                    word_occurences[word]=1    
+    
+    for word in word_occurences:
+        if min_word_occ <= word_occurences[word]:
+            word_list.append(word)
+            
+    print(word_list)
+    print(("="*50))
+
 def task6():
     # Create a k-fold cross-validation procedure for splitting the training 
     # set into k folds 
@@ -239,9 +266,20 @@ def task6():
     
     # and train the classifier created in tasks 2-5 on the training subset [1 point]. 
     training_data, training_lables, test_data, test_labels, total_positive, total_negative, total_reviews = task1()
-
-    # for train_index, test_index in kf.split(training_data):
     
+    prior_review_pos = total_positive/total_reviews
+    prior_review_neg = total_negative/total_reviews
+    
+    for train_index, test_index in kf.split(training_data):
+        # training_data.iloc[index]
+        # print("Train index", train_index) 
+        # print("Test index: ", test_index)
+        # print("Traning data subset using train_index: ", training_data.iloc[train_index])
+        classifier(training_data.iloc[train_index], test_index)
+        
+        # Confusion matrix 
+        # c = metrics.confusion_matrix(target[test_index], results)
+        
     # Evaluate the classification accuracy, i.e. the fraction of correctly 
     # classifier samples, on the evaluation subset [1 point]
     
@@ -264,22 +302,24 @@ def task6():
 
 def main():
     # First create the four needed lists 
-    training_data, training_lables, test_data, test_labels, total_positive, total_negative, total_reviews = task1()
+    # training_data, training_lables, test_data, test_labels, total_positive, total_negative, total_reviews = task1()
     
-    # Now setup training data
-    # Setting a min word count of 4 because manjority of non sentiment words
-    # like "the" or "and" probably arnt needed.  Will skip "but" though
-    # Keep min word occ small though for testing as large count can take a while
-    word_list = task2(training_data, 4, 10000)
+    # # Now setup training data
+    # # Setting a min word count of 4 because manjority of non sentiment words
+    # # like "the" or "and" probably arnt needed.  Will skip "but" though
+    # # Keep min word occ small though for testing as large count can take a while
+    # word_list = task2(training_data, 4, 10000)
     
-    # # Now run task3
-    positive_word_reivew_count, negative_word_reivew_count = task3(word_list, training_data, training_lables)
+    # # # Now run task3
+    # positive_word_reivew_count, negative_word_reivew_count = task3(word_list, training_data, training_lables)
     
-    # # Now do task4
-    likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg = task4(positive_word_reivew_count, negative_word_reivew_count, total_positive, total_negative, total_reviews)
+    # # # Now do task4
+    # likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg = task4(positive_word_reivew_count, negative_word_reivew_count, total_positive, total_negative, total_reviews)
     
-    # # Now do task5
-    prediction = task5(likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg, test_data, test_labels, word_list)
+    # # # Now do task5
+    # prediction = task5(likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg, test_data, test_labels, word_list)
+    
+    task6()
     
 print(("="*50), "Main", ("="*50))
 main()
