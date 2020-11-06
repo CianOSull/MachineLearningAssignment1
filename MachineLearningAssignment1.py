@@ -232,15 +232,13 @@ def task5(likelihood_positive, likelihood_negative, prior_review_pos, prior_revi
     
     return prediction
 
-def classifier(feature_data, feature_labels):
+def classifier(feature_data, target_labels):
     word_list = []
     word_occurences = {}
     min_word_length = 3
     min_word_occ = 10000
     
     for index in range(len(feature_data)):
-         # print(feature_data.values[index][0])
-         # break
         transformedValue = "".join(c for c in feature_data.values[index][0] if c.isalnum() or c == " ")
         transformedValue = transformedValue.lower()
         transformedValue = transformedValue.split()
@@ -258,24 +256,52 @@ def classifier(feature_data, feature_labels):
             
     print(word_list)
     print(("="*50))
+    # ======================================================
+    
+    positive_word_reivew_count = dict.fromkeys(word_list, 0)
+    negative_word_reivew_count = dict.fromkeys(word_list, 0)
+    
+    for index in range(len(feature_data)):
+        transformedValue = "".join(c for c in feature_data.values[index][0] if c.isalnum() or c == " ")
+        transformedValue = transformedValue.lower()
+        transformedValue = transformedValue.split()
+               
+        for word in word_list:
+            if word in transformedValue: 
+                if target_labels.values[index] == 1: 
+                    positive_word_reivew_count[word] = positive_word_reivew_count[word] + 1
+                    continue
+                else:
+                    negative_word_reivew_count[word] = negative_word_reivew_count[word] + 1
+                    continue
 
+    
+    print(positive_word_reivew_count)
+    print("===")
+    print(negative_word_reivew_count)
+    print(("="*50))
+    
 def task6():
     # Create a k-fold cross-validation procedure for splitting the training 
     # set into k folds 
     kf = model_selection.KFold(n_splits=6, shuffle=True)
     
     # and train the classifier created in tasks 2-5 on the training subset [1 point]. 
-    training_data, training_lables, test_data, test_labels, total_positive, total_negative, total_reviews = task1()
+    review_df = pd.read_excel("movie_reviews.xlsx")
+    review_df['Sentiment'] = review_df['Sentiment'].map({'negative' : 0, 'positive' : 1})
     
-    prior_review_pos = total_positive/total_reviews
-    prior_review_neg = total_negative/total_reviews
+    training_data = review_df[review_df['Split'] == "train"][['Review']]
+    
+    # training_labels = review_df[review_df['Split'] == "train"][['Sentiment']]
+    
+    training_labels = review_df['Sentiment']
     
     for train_index, test_index in kf.split(training_data):
         # training_data.iloc[index]
         # print("Train index", train_index) 
         # print("Test index: ", test_index)
         # print("Traning data subset using train_index: ", training_data.iloc[train_index])
-        classifier(training_data.iloc[train_index], test_index)
+        classifier(training_data.iloc[train_index], training_labels[train_index])
         
         # Confusion matrix 
         # c = metrics.confusion_matrix(target[test_index], results)
