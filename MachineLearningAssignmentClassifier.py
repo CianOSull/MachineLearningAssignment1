@@ -10,6 +10,38 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
+# This is task 1
+def setup_data():
+    review_df = pd.read_excel("movie_reviews.xlsx")
+    
+    training_data = review_df[review_df['Split'] == "train"][['Review']]
+    
+    training_labels = review_df[review_df['Split'] == "train"][['Sentiment']]
+    
+    test_data = review_df[review_df['Split'] == "test"][['Review']]
+    
+    test_labels = review_df[review_df['Split'] == "test"][['Sentiment']]
+    
+    total_reviews = len(training_labels)
+    
+    total_positive = len(training_labels[training_labels["Sentiment"] == "positive"])
+    total_negative = len(training_labels[training_labels["Sentiment"] == "negative"])
+    
+    print("The number of postive reviews in the training set is >>>: ", 
+          len(training_labels[training_labels["Sentiment"] == "positive"]))
+    
+    print("The number of negative reviews in the training set is >>>: ", 
+          len(training_labels[training_labels["Sentiment"] == "negative"]))
+    
+    print("The number of postive reviews in the evaluation set is >>>: ", 
+          len(test_labels[test_labels["Sentiment"] == "positive"]))
+    
+    print("The number of negative reviews in the evaluation set is >>>: ",
+          len(test_labels[test_labels["Sentiment"] == "negative"]))
+    print(("="*50))
+    
+    return training_data, training_labels, test_data, test_labels, total_positive, total_negative, total_reviews
+
 # This is task 2
 def create_word_list(training_data, min_word_length, min_word_occ):
     word_list = []
@@ -37,6 +69,7 @@ def create_word_list(training_data, min_word_length, min_word_occ):
 
     return word_list
 
+# This is task 3
 def count_word_per_reviews(word_list, training_data, training_labels):        
     positive_word_reivew_count = dict.fromkeys(word_list, 0)
     negative_word_reivew_count = dict.fromkeys(word_list, 0)
@@ -62,6 +95,7 @@ def count_word_per_reviews(word_list, training_data, training_labels):
     
     return positive_word_reivew_count, negative_word_reivew_count
 
+# This is task 4
 def calc_liklihoods(positive_word_reivew_count, negative_word_reivew_count, total_positive, total_negative):
     # The total reviews of course would be just hte two added together
     total_reviews = total_positive + total_negative
@@ -90,6 +124,7 @@ def calc_liklihoods(positive_word_reivew_count, negative_word_reivew_count, tota
     
     return likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg
 
+# This is task 5
 def classifier(review_text, likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg):
     logLikelihood_positive = 0
     logLikelihood_negative = 0

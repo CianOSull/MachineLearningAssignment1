@@ -10,13 +10,14 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+from sklearn import model_selection
+from sklearn import metrics
+
 
 def task1():
     # First load the excel sheet and take a peek at whats inside
     review_df = pd.read_excel("movie_reviews.xlsx")
-    # print(review_df.head())
-    # print(review_df.columns.values)
-    # print("="*50)
+    review_df['Sentiment'] = review_df['Sentiment'].map({'negative' : 0, 'positive' : 1})
     
     # Create the four lists
     # This gets every row in review where split = train and creats a df with 
@@ -36,20 +37,20 @@ def task1():
     total_reviews = len(training_labels)
     # print(total_reviews)
     # Task 4 mentions that these were obtained in task 1 so thats why they are here to be returned
-    total_positive = len(training_labels[training_labels["Sentiment"] == "positive"])
-    total_negative = len(training_labels[training_labels["Sentiment"] == "negative"])
+    total_positive = len(training_labels[training_labels["Sentiment"] == 1])
+    total_negative = len(training_labels[training_labels["Sentiment"] == 0])
     
     print("The number of postive reviews in the training set is >>>: ", 
-          len(training_labels[training_labels["Sentiment"] == "positive"]))
+          len(training_labels[training_labels["Sentiment"] == 1]))
     
     print("The number of negative reviews in the training set is >>>: ", 
-          len(training_labels[training_labels["Sentiment"] == "negative"]))
+          len(training_labels[training_labels["Sentiment"] == 0]))
     
     print("The number of postive reviews in the evaluation set is >>>: ", 
-          len(test_labels[test_labels["Sentiment"] == "positive"]))
+          len(test_labels[test_labels["Sentiment"] == 1]))
     
     print("The number of negative reviews in the evaluation set is >>>: ",
-          len(test_labels[test_labels["Sentiment"] == "negative"]))
+          len(test_labels[test_labels["Sentiment"] == 0]))
     print(("="*50))
     
     return training_data, training_labels, test_data, test_labels, total_positive, total_negative, total_reviews
@@ -114,7 +115,8 @@ def task3(word_list, training_data, training_labels):
             # Check if the word is in the string list
             if word in transformedValue:
                 # Here check if the reivew is ngegative or positive
-                if training_labels.iloc[index].values[0] == "positive": 
+                # if training_labels.iloc[index].values[0] == "positive": 
+                if training_labels.iloc[index].values[0] == 1: 
                    # If it is then increment its value in the dictionary
                    positive_word_reivew_count[word] = positive_word_reivew_count[word] + 1
                    # Then continue unto the next review
@@ -225,9 +227,39 @@ def task5(likelihood_positive, likelihood_negative, prior_review_pos, prior_revi
     # output the predicted sentiment label for the new review 
     # (i.e. either “positive” or “negative”).
             
+    print("Task 5 done")
+    print(("="*50))
+    
     return prediction
 
 def task6():
+    # Create a k-fold cross-validation procedure for splitting the training 
+    # set into k folds 
+    kf = model_selection.KFold(n_splits=6, shuffle=True)
+    
+    # and train the classifier created in tasks 2-5 on the training subset [1 point]. 
+    training_data, training_lables, test_data, test_labels, total_positive, total_negative, total_reviews = task1()
+
+    # for train_index, test_index in kf.split(training_data):
+    
+    # Evaluate the classification accuracy, i.e. the fraction of correctly 
+    # classifier samples, on the evaluation subset [1 point]
+    
+    # and use this procedure to calculate the mean accuracy score [1 point].
+   
+    # Compare different accuracy scores for different choices 
+    # (1,2,3,4,5,6,7,8,9,10) of the word length parameter as defined in task 2 [1 point]. 
+    
+    # Select the optimal word length parameter [1 point] 
+    # and evaluate the resulting classifier on the test set extracted in task 1.
+    
+    # The final evaluation should contain:
+    # - The confusion matrix for the classification [1 point]
+    # - The percentage of true positive [1 point], true negatives [1 point], false positives [1
+    # point] and false negatives [1 point]
+    # - The classification accuracy score, i.e. the fraction of correctly classified samples [1
+    # point]
+
     pass
 
 def main():
@@ -240,13 +272,13 @@ def main():
     # Keep min word occ small though for testing as large count can take a while
     word_list = task2(training_data, 4, 10000)
     
-    # Now run task3
+    # # Now run task3
     positive_word_reivew_count, negative_word_reivew_count = task3(word_list, training_data, training_lables)
     
-    # Now do task4
+    # # Now do task4
     likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg = task4(positive_word_reivew_count, negative_word_reivew_count, total_positive, total_negative, total_reviews)
     
-    # Now do task5
+    # # Now do task5
     prediction = task5(likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg, test_data, test_labels, word_list)
     
 print(("="*50), "Main", ("="*50))
