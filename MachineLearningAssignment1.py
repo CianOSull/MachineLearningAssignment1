@@ -335,7 +335,7 @@ def classifier(feature_data, target_labels, total_positive, total_negative, tota
 def task6():
     # Create a k-fold cross-validation procedure for splitting the training 
     # set into k folds `
-    kf = model_selection.KFold(n_splits=3, shuffle=True)
+    kf = model_selection.KFold(n_splits=6, shuffle=True)
     
     # and train the classifier created in tasks 2-5 on the training subset [1 point]. 
     training_data, training_lables, test_data, test_labels, total_positive, total_negative, total_reviews = task1()
@@ -390,10 +390,10 @@ def task6():
     # - The percentage of true positive [1 point], true negatives [1 point], false positives [1
     # point] and false negatives [1 point]
     # print(C)
-    print("True positives:", round(np.sum(true_positive)/len(test_data)), "%")
-    print("True negatives:", round(np.sum(true_negative)/len(test_data)), "%")
-    print("False positives:", round(np.sum(false_postiive)/len(test_data)), "%")
-    print("False negatives:", round(np.sum(false_negatives)/len(test_data)), "%")
+    print("True positives:", round(np.sum(true_positive)/len(test_data), 5), "%")
+    print("True negatives:", round(np.sum(true_negative)/len(test_data), 5), "%")
+    print("False positives:", round(np.sum(false_postiive)/len(test_data), 5), "%")
+    print("False negatives:", round(np.sum(false_negatives)/len(test_data), 5), "%")
             
     # - The classification accuracy score, i.e. the fraction of correctly classified samples [1 point]
     print("Test Accuracy: ", np.mean(all_results))
