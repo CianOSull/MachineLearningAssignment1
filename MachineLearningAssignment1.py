@@ -238,7 +238,7 @@ def process_text(text):
     text = text.split()
     return text
 
-def classifier(feature_data, target_labels, total_positive, total_negative, total_reviews, min_word_length, min_word_occ):
+def classifier(feature_data, target_labels, min_word_length, min_word_occ):
     word_list = []
     word_occurences = {}
     
@@ -290,12 +290,18 @@ def classifier(feature_data, target_labels, total_positive, total_negative, tota
     # =====================
     alpha = 1
     
-    likelihood_positive = positive_word_reivew_count.copy()
+    # Calce the totals
+    total_reviews = len(feature_data)
+    total_positive = len(target_labels[target_labels["Sentiment"] == 1])
+    total_negative = len(target_labels`[target_labels["Sentiment"] == 0])
+    
+        # Create the two lilehood dictionaries to be used and set all their values to default to 0
+    likelihood_positive = dict.fromkeys(word_list, 0)
+    likelihood_negative = dict.fromkeys(word_list, 0)
     
     for word in positive_word_reivew_count:
         likelihood_positive[word] = (positive_word_reivew_count[word] + alpha)/(total_positive + 2*alpha)
     
-    likelihood_negative = positive_word_reivew_count.copy()
     for word in negative_word_reivew_count:
         likelihood_negative[word] = (negative_word_reivew_count[word] + alpha)/(total_negative + 2*alpha)
     
@@ -347,7 +353,7 @@ def task6():
     # (1,2,3,4,5,6,7,8,9,10) of the word length parameter as defined in task 2 [1 point]. 
     for i in range(1,11):
         for train_index, test_index in kf.split(training_data):
-            results = classifier(training_data.iloc[train_index], training_lables.iloc[train_index], total_positive, total_negative, total_reviews, i, 10000)
+            results = classifier(training_data.iloc[train_index], training_lables.iloc[train_index], i, 10000)
             
             # Evaluate the classification accuracy, i.e. the fraction of correctly 
             # classifier samples, on the evaluation subset [1 point]
@@ -370,7 +376,7 @@ def task6():
     false_postiive = []
     false_negatives = []
     
-    test_results = classifier(test_data, test_labels, total_positive, total_negative, total_reviews, highest_min_word_len, 10000)
+    test_results = classifier(test_data, test_labels, highest_min_word_len, 10000)
     
     # Evaluate the classification accuracy, i.e. the fraction of correctly 
     # classifier samples, on the evaluation subset [1 point]
