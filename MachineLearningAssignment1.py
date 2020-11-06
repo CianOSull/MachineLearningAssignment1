@@ -254,7 +254,7 @@ def classifier(feature_data, target_labels, total_positive, total_negative, tota
         if min_word_occ <= word_occurences[word]:
             word_list.append(word)
             
-    print(word_list)
+    # print(word_list)
     print(("="*50))
     # ======================================================
     
@@ -276,9 +276,9 @@ def classifier(feature_data, target_labels, total_positive, total_negative, tota
                     continue
 
     
-    print(positive_word_reivew_count)
-    print("===")
-    print(negative_word_reivew_count)
+    # print(positive_word_reivew_count)
+    # print("===")
+    # print(negative_word_reivew_count)
     print(("="*50))
     
     # =====================
@@ -296,9 +296,9 @@ def classifier(feature_data, target_labels, total_positive, total_negative, tota
     prior_review_pos = total_positive/total_reviews
     prior_review_neg = total_negative/total_reviews
     
-    print(likelihood_negative)
-    print("===")
-    print(likelihood_negative)
+    # print(likelihood_negative)
+    # print("===")
+    # print(likelihood_negative)
     print(("="*50))
     
     # ==============================================
@@ -321,7 +321,8 @@ def classifier(feature_data, target_labels, total_positive, total_negative, tota
         else:
             prediction.append(0)
     
-    print(prediction)
+    # print(prediction)
+    return prediction
     print(("="*50))
     
 def task6():
@@ -332,25 +333,29 @@ def task6():
     # and train the classifier created in tasks 2-5 on the training subset [1 point]. 
     training_data, training_lables, test_data, test_labels, total_positive, total_negative, total_reviews = task1()
     
-    review_df = pd.read_excel("movie_reviews.xlsx")
-    review_df['Sentiment'] = review_df['Sentiment'].map({'negative' : 0, 'positive' : 1})
-    training_labels = review_df['Sentiment']
+    allResults = []
     
     for train_index, test_index in kf.split(training_data):
         # training_data.iloc[index]
         # print("Train index", train_index) 
         # print("Test index: ", test_index)
         # print("Traning data subset using train_index: ", training_data.iloc[train_index])
-        classifier(training_data.iloc[train_index], training_labels[train_index], total_positive, total_negative, total_reviews)
+        results = classifier(training_data.iloc[train_index], training_lables.iloc[train_index], total_positive, total_negative, total_reviews)
+        
+        # print("Train index size: ", len(training_data.iloc[train_index]))
+        # print("Test Index size: ", len(training_lables.iloc[train_index]))
+        # print("Results size: ", len(results))
         
         # Confusion matrix 
-        # c = metrics.confusion_matrix(target[test_index], results)
+        # c = metrics.confusion_matrix(target[test_index], results) 
         
-    # Evaluate the classification accuracy, i.e. the fraction of correctly 
-    # classifier samples, on the evaluation subset [1 point]
+        # Evaluate the classification accuracy, i.e. the fraction of correctly 
+        # classifier samples, on the evaluation subset [1 point]
+        allResults.append(metrics.accuracy_score(results, training_lables.iloc[train_index]))
     
-    # and use this procedure to calculate the mean accuracy score [1 point].
-   
+    # and use this procedure to calculate the mean accuracy score [1 point]. 
+    print("Mean Accuracy is", np.mean(allResults))
+    
     # Compare different accuracy scores for different choices 
     # (1,2,3,4,5,6,7,8,9,10) of the word length parameter as defined in task 2 [1 point]. 
     
