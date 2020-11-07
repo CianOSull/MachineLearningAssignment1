@@ -201,10 +201,10 @@ def task6():
     
     print(("="*50))
     
-    print("True positives:", round(np.sum(true_positive)/len(test_data), 5), "%")
-    print("True negatives:", round(np.sum(true_negative)/len(test_data), 5), "%")
-    print("False positives:", round(np.sum(false_postiive)/len(test_data), 5), "%")
-    print("False negatives:", round(np.sum(false_negatives)/len(test_data), 5), "%")
+    print("True positives:", round(np.sum(true_positive)/len(test_labels), 5), "%")
+    print("True negatives:", round(np.sum(true_negative)/len(test_labels), 5), "%")
+    print("False positives:", round(np.sum(false_postiive)/len(test_labels), 5), "%")
+    print("False negatives:", round(np.sum(false_negatives)/len(test_labels), 5), "%")
             
     print("Test Accuracy: ", test_accuracy)
 
