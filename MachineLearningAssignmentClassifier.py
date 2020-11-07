@@ -23,6 +23,8 @@ def process_text(text):
 def load_data():
     # Load dataset
     review_df = pd.read_excel("movie_reviews.xlsx")
+    # print(review_df.head())
+    
     # Map all values in sentiment to 0 and 1
     review_df['Sentiment'] = review_df['Sentiment'].map({'negative' : 0, 'positive' : 1})
     
@@ -36,13 +38,13 @@ def load_data():
     test_labels = review_df[review_df['Split'] == "test"][['Sentiment']]
     
     # The details that are to be printed to the console
-    print("The number of postive reviews in the training set is >>>: ", 
+    print("The number of positive reviews in the training set is >>>: ", 
           len(training_labels[training_labels["Sentiment"] == 1]))
     
     print("The number of negative reviews in the training set is >>>: ", 
           len(training_labels[training_labels["Sentiment"] == 0]))
     
-    print("The number of postive reviews in the evaluation set is >>>: ", 
+    print("The number of positive reviews in the evaluation set is >>>: ", 
           len(test_labels[test_labels["Sentiment"] == 1]))
     
     print("The number of negative reviews in the evaluation set is >>>: ",
@@ -52,7 +54,7 @@ def load_data():
     
     return training_data, training_labels, test_data, test_labels
 
-# This does tasks 2 - 5
+# This does tasks 2 - 4
 def create_classifier(feature_data, target_labels, min_word_length, min_word_occ):
     # ============================ Task 2 ============================
     word_list = []
@@ -73,6 +75,9 @@ def create_classifier(feature_data, target_labels, min_word_length, min_word_occ
     for word in word_occurences:
         if min_word_occ <= word_occurences[word]:
             word_list.append(word)
+            
+    # print(word_list)
+    # print(("="*50))
     # ================================================================
     
     # ============================ Task 3 ============================    
@@ -97,6 +102,11 @@ def create_classifier(feature_data, target_labels, min_word_length, min_word_occ
                 else:
                     negative_word_reivew_count[word] = negative_word_reivew_count[word] + 1
                     continue
+    
+    # print(positive_word_reivew_count)
+    # print("===")
+    # print(negative_word_reivew_count)
+    # print(("="*50))
     # ================================================================
     
     # ============================ Task 4 ============================
@@ -107,6 +117,9 @@ def create_classifier(feature_data, target_labels, min_word_length, min_word_occ
     total_reviews = len(feature_data)
     total_positive = len(target_labels[target_labels["Sentiment"] == 1])
     total_negative = len(target_labels[target_labels["Sentiment"] == 0])
+    # print(total_reviews)
+    # print(total_positive)
+    # print(total_negative)
     
     # Create the two lilehood dictionaries to be used and set all their values to default to 0
     likelihood_positive = dict.fromkeys(word_list, 0)
@@ -122,9 +135,15 @@ def create_classifier(feature_data, target_labels, min_word_length, min_word_occ
     prior_review_pos = total_positive/total_reviews
     prior_review_neg = total_negative/total_reviews
     
+    # print(likelihood_negative)
+    # print("===")
+    # print(likelihood_negative)
+    # print(("="*50))
+    
     return likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg
     # ================================================================
 
+# This does task 5
 def classifier(feature_data, likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg):
     # ============================ Task 5 ============================
     prediction = []
@@ -146,9 +165,13 @@ def classifier(feature_data, likelihood_positive, likelihood_negative, prior_rev
         else:
             prediction.append(0) 
     
+    # print(prediction)
+    # print(("="*50))
+    
     return prediction
 
-def task6():
+def main():
+    # ============================ Task 6 ============================
     # Set up the kf split using 6 splits
     kf = model_selection.KFold(n_splits=6, shuffle=True)
     
@@ -156,26 +179,29 @@ def task6():
     training_data, training_lables, test_data, test_labels = load_data()
     
     # These lists are for the accuracy scores
-    all_results = []
+    
     mean_results = []
     
     # For loop for testing 1 - 10 minimum word lengths
     for i in range(1,11):
+        all_results = []
+        print("Current Min Word Length:", i)
         for train_index, test_index in kf.split(training_data):            
-            likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg = create_classifier(training_data.iloc[train_index], training_lables.iloc[train_index], i, 10000)
+            likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg = create_classifier(training_data.iloc[train_index], training_lables.iloc[train_index], i, 1000)
             results = classifier(training_data.iloc[test_index], likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg)
             
             all_results.append(metrics.accuracy_score(results, training_lables.iloc[test_index]))
-            print(("="*50))
+        
+        print(("="*50))
     
         mean_results.append(np.mean(all_results))
     
     # Prin the accuracy scores
-    print("Mean kfold Test Indexes Result Accuracies: ", mean_results)
+    print("Mean kfold Test Indexes Result Accuracies:", mean_results)
     # Print the mininum word length with the highest accuracy
-    # Throuhg multiple tests, at mininum word occurance = 10000, word length of 3 is found to be best
+    # Throuhg multiple tests, at mininum word occurance = 10000, word length of 5 is found to be best
     highest_min_word_len = mean_results.index(max(mean_results))+1
-    print("Highest accuracy Min word length: ", highest_min_word_len)
+    print("Highest accuracy Min word length:", highest_min_word_len)
     
     # lists for the confusion matrix
     true_positive = []
@@ -184,7 +210,7 @@ def task6():
     false_negatives = []
 
     # Train the classifier again using the word length with the highest accuracy
-    likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg = create_classifier(training_data, training_lables, highest_min_word_len, 10000)
+    likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg = create_classifier(training_data, training_lables, highest_min_word_len, 1000)
     # Now test it on the test data
     test_results = classifier(test_data, likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg)
     
@@ -205,11 +231,8 @@ def task6():
     print("True negatives:", round(np.sum(true_negative)/len(test_labels), 5), "%")
     print("False positives:", round(np.sum(false_postiive)/len(test_labels), 5), "%")
     print("False negatives:", round(np.sum(false_negatives)/len(test_labels), 5), "%")
-            
+    # The accuracy on the test set from task1
     print("Test Accuracy: ", test_accuracy)
-
-def main():
-    task6()
     
 print(("="*50), "Main", ("="*50))
 main()
