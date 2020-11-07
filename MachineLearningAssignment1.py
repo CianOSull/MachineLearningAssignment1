@@ -238,7 +238,7 @@ def process_text(text):
     text = text.split()
     return text
 
-def classifier(feature_data, target_labels, min_word_length, min_word_occ):
+def create_classifier(feature_data, target_labels, min_word_length, min_word_occ):
     word_list = []
     word_occurences = {}
     
@@ -293,7 +293,7 @@ def classifier(feature_data, target_labels, min_word_length, min_word_occ):
     # Calce the totals
     total_reviews = len(feature_data)
     total_positive = len(target_labels[target_labels["Sentiment"] == 1])
-    total_negative = len(target_labels`[target_labels["Sentiment"] == 0])
+    total_negative = len(target_labels[target_labels["Sentiment"] == 0])
     
         # Create the two lilehood dictionaries to be used and set all their values to default to 0
     likelihood_positive = dict.fromkeys(word_list, 0)
@@ -308,11 +308,13 @@ def classifier(feature_data, target_labels, min_word_length, min_word_occ):
     prior_review_pos = total_positive/total_reviews
     prior_review_neg = total_negative/total_reviews
     
+    return likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg, word_list
     # print(likelihood_negative)
     # print("===")
     # print(likelihood_negative)
     # print(("="*50))
     
+def classifier(feature_data, likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg, word_list):
     # ==============================================
     prediction = []
     for index in range(len(feature_data)):
@@ -353,18 +355,19 @@ def task6():
     # (1,2,3,4,5,6,7,8,9,10) of the word length parameter as defined in task 2 [1 point]. 
     for i in range(1,11):
         for train_index, test_index in kf.split(training_data):
-            results = classifier(training_data.iloc[train_index], training_lables.iloc[train_index], i, 10000)
+            likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg, word_list = create_classifier(training_data.iloc[train_index], training_lables.iloc[train_index], i, 10000)
+            results = classifier(training_data.iloc[test_index], likelihood_positive, likelihood_negative, prior_review_pos, prior_review_neg, word_list)
             
             # Evaluate the classification accuracy, i.e. the fraction of correctly 
             # classifier samples, on the evaluation subset [1 point]
-            all_results.append(metrics.accuracy_score(results, training_lables.iloc[train_index]))
+            all_results.append(metrics.accuracy_score(results, training_lables.iloc[test_index]))
             print(("="*50))
     
         # and use this procedure to calculate the mean accuracy score [1 point]. 
         mean_results.append(np.mean(all_results))
     
     # Select the optimal word length parameter [1 point] 
-    print("Mean Results: ", mean_results)
+    print("Mean Test Accuracy Results: ", mean_results)
     highest_min_word_len = mean_results.index(max(mean_results))+1
     print("highest accuracy Min word length: ", highest_min_word_len)
     
@@ -376,7 +379,8 @@ def task6():
     false_postiive = []
     false_negatives = []
     
-    test_results = classifier(test_data, test_labels, highest_min_word_len, 10000)
+    test_lp, test_ln, test_pp, test_pn, word_list  = create_classifier(test_data, test_labels, highest_min_word_len, 10000)
+    test_results = classifier(test_data, test_lp, test_ln, test_pp, test_pn, word_list)
     
     # Evaluate the classification accuracy, i.e. the fraction of correctly 
     # classifier samples, on the evaluation subset [1 point]
