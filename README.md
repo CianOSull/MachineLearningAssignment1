@@ -1,6 +1,8 @@
 # MachineLearningAssignment1
  Machine Leanring Module Assignment 1 to create a Bayesian Classificaiton function for creating a model that can decide if a movie review is positive or negative.
 
+MachineLearningAssignmentClassifier.py is the file that was submitted.
+
 ## Project specifiction:<br />
 **Objective**:<br />
 The Excel file “movie_reviews.xlsx” on Canvas contains movie reviews from IMDb along with 
